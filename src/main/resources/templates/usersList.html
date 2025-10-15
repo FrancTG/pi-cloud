@@ -13,7 +13,17 @@
     <div class="container-fluid">
         <h1 class="mt-4">Usuarios</h1>
 
-
+        <table class="table table-striped my-5">
+            <tr>
+                <th>Id</th>
+                <th>Email</th>
+                <th></th>
+            </tr>
+            <tr th:each="user: ${users}">
+                <td th:text="${user.id}"></td>
+                <td th:text="${user.email}"></td>
+            </tr>
+        </table>
 
     </div>
 

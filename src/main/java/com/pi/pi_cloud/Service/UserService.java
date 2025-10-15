@@ -8,6 +8,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService {
 
@@ -22,5 +24,9 @@ public class UserService {
     public void addUser(UserData userData) {
         User user = modelMapper.map(userData, User.class);
         userRepository.save(user);
+    }
+
+    public Iterable<User> getAllUsers() {
+        return userRepository.findAll();
     }
 }
