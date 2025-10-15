@@ -1,16 +1,49 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
+
+<!-- Fragmento para importar los titulos de las páginas -->
 <head th:fragment="head (titulo)">
     <meta charset="UTF-8"/>
     <title th:text="${titulo}"></title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
 </head>
 
+<!-- Fragmento para importar bootstrap -->
 <div th:fragment="bootstrap">
     <script th:src="@{/js/jquery.min.js}"></script>
     <script th:src="@{/js/popper.min.js}"></script>
     <script th:src="@{/js/bootstrap.min.js}"></script>
+</div>
+
+<!-- Fragmento para importar la barra lateral o sidebar -->
+<div th:fragment="sidebar" class="d-flex flex-column flex-shrink-0 p-3 bg-light" style="width: 280px;">
+    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
+        <span class="fs-4">Sidebar</span>
+    </a>
+    <hr>
+    <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item">
+            <a href="#" class="nav-link active" aria-current="page">
+                Home
+            </a>
+        </li>
+        <li>
+            <a href="#" class="nav-link link-dark">
+                Buscar
+            </a>
+        </li>
+        <li>
+            <a href="#" class="nav-link link-dark">
+                Cargar
+            </a>
+        </li>
+        <li>
+            <a href="#" class="nav-link link-dark">
+                Ejemplo
+            </a>
+        </li>
+    </ul>
 </div>
 
 </html>
