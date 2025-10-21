@@ -18,6 +18,10 @@ public class User implements Serializable {
     private String password;
     private boolean isAdmin;
 
+    @ManyToOne
+    @JoinColumn(name = "departamento_id")
+    private Departamento departamento;
+
     public User() {
 
     }
@@ -58,5 +62,13 @@ public class User implements Serializable {
 
     public void setAdmin(boolean admin) {
         isAdmin = admin;
+    }
+
+    public Departamento getDepartamento() {
+        return departamento;
+    }
+
+    public void setDepartamento(Departamento departamento) {
+        this.departamento = departamento;
     }
 }
