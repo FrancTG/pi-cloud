@@ -6,6 +6,7 @@ public class UserData {
     private String email;
     private String password;
     private boolean isAdmin;
+    private Long departamentoId;
 
     public Long getId() {
         return id;
@@ -37,5 +38,13 @@ public class UserData {
 
     public void setAdmin(boolean admin) {
         isAdmin = admin;
+    }
+
+    public Long getDepartamentoId() {
+        return departamentoId;
+    }
+
+    public void setDepartamentoId(Long departamentoId) {
+        this.departamentoId = departamentoId;
     }
 }

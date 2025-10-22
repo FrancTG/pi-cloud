@@ -5,10 +5,14 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
-@Table(name = "users")
-public class User implements Serializable {
+@Table(name = "usuario")
+public class Usuario implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,14 +22,23 @@ public class User implements Serializable {
     private String password;
     private boolean isAdmin;
 
-    public User() {
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    List<Fichero> ficheros = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "departamento_id")
+    private Departamento departamento;
+
+
+    public Usuario() {
 
     }
 
-    public User(String email, String password, boolean isAdmin) {
+    public Usuario(String email, String password, boolean isAdmin, Departamento departamento) {
         this.email = email;
         this.password = password;
         this.isAdmin = isAdmin;
+        this.departamento = departamento;
     }
 
     public Long getId() {
@@ -58,5 +71,21 @@ public class User implements Serializable {
 
     public void setAdmin(boolean admin) {
         isAdmin = admin;
+    }
+
+    public Departamento getDepartamento() {
+        return departamento;
+    }
+
+    public void setDepartamento(Departamento departamento) {
+        this.departamento = departamento;
+    }
+
+    public List<Fichero> getFicheros() {
+        return ficheros;
+    }
+
+    public void setFicheros(List<Fichero> ficheros) {
+        this.ficheros = ficheros;
     }
 }
