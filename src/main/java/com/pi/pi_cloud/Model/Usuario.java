@@ -5,10 +5,12 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-@Table(name = "users")
-public class User implements Serializable {
+@Table(name = "usuario")
+public class Usuario implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,18 +20,23 @@ public class User implements Serializable {
     private String password;
     private boolean isAdmin;
 
+    @OneToMany(mappedBy = "usuario")
+    Set<Fichero> ficheros = new HashSet<>();
+
     @ManyToOne
     @JoinColumn(name = "departamento_id")
     private Departamento departamento;
 
-    public User() {
+
+    public Usuario() {
 
     }
 
-    public User(String email, String password, boolean isAdmin) {
+    public Usuario(String email, String password, boolean isAdmin, Departamento departamento) {
         this.email = email;
         this.password = password;
         this.isAdmin = isAdmin;
+        this.departamento = departamento;
     }
 
     public Long getId() {
@@ -71,4 +78,13 @@ public class User implements Serializable {
     public void setDepartamento(Departamento departamento) {
         this.departamento = departamento;
     }
+
+    public Set<Fichero> getFicheros() {
+        return ficheros;
+    }
+
+    public void setFicheros(Set<Fichero> ficheros) {
+        this.ficheros = ficheros;
+    }
+
 }

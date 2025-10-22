@@ -8,7 +8,7 @@ public class FicheroData {
     private String nombre;
     private byte[] datos;
     private SecretKey claveCifrada;
-    private Long departamentoId;
+    private Long userId;
 
     public Long getId() {
         return id;
@@ -42,11 +42,11 @@ public class FicheroData {
         this.claveCifrada = claveCifrada;
     }
 
-    public Long getDepartamentoId() {
-        return departamentoId;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setDepartamentoId(Long departamentoId) {
-        this.departamentoId = departamentoId;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }

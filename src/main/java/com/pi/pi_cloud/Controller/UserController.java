@@ -1,6 +1,5 @@
 package com.pi.pi_cloud.Controller;
 
-import com.pi.pi_cloud.Model.User;
 import com.pi.pi_cloud.Service.UserService;
 import com.pi.pi_cloud.dto.UserData;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,12 +1,12 @@
 package com.pi.pi_cloud.Service;
 
-import com.pi.pi_cloud.Model.Departamento;
 import com.pi.pi_cloud.Model.Fichero;
+import com.pi.pi_cloud.Model.Usuario;
 import com.pi.pi_cloud.dto.FicheroData;
 import com.pi.pi_cloud.lib.AesResult;
 import com.pi.pi_cloud.lib.Cifrado;
-import com.pi.pi_cloud.repository.DepartamentoRepository;
 import com.pi.pi_cloud.repository.FicheroRepository;
+import com.pi.pi_cloud.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -31,20 +30,13 @@ public class FicheroService {
     private ModelMapper modelMapper;
 
     @Autowired
-    DepartamentoRepository departamentoRepository;
+    private UserRepository userRepository;
 
-    private final Departamento departamento = new Departamento("ejemplo1","org1");
-
-    private boolean primerDep = true;
 
     @Transactional
     public void addFile(MultipartFile file) throws IOException {
 
-        if (primerDep) {
-            departamentoRepository.save(departamento);
-            primerDep = false;
-        }
-
+        Usuario user = userRepository.findById(0L).orElse(null);
 
         try {
             SecretKey sk = Cifrado.generarClaveAes();
@@ -54,7 +46,7 @@ public class FicheroService {
             fichero.setNombre(file.getOriginalFilename()); //Falta cifrarlo?
             fichero.setDatos(res.toBlob());
             fichero.setClaveCifrada(sk);
-            fichero.setDepartamento(departamento);
+            fichero.setUsuario(user);
             ficheroRepository.save(fichero);
 
         } catch (GeneralSecurityException ex) {
@@ -64,20 +56,9 @@ public class FicheroService {
     }
 
     @Transactional
-    public List<FicheroData> getFicherosFromDepartamento() {
-
-
-        Departamento dep = departamentoRepository.findById(1L).orElse(null);
-
-
-        if (dep != null) {
-            List<FicheroData> ficheros = dep.getFicheros().stream().map(fichero -> modelMapper.map(fichero,FicheroData.class)).collect(Collectors.toList());
-
-            return ficheros;
-        } else {
-            return null;
-        }
-
+    public List<FicheroData> getFicherosFromUsuario(Usuario user) {
+        List<FicheroData> ficheros = user.getFicheros().stream().map(fichero -> modelMapper.map(fichero,FicheroData.class)).collect(Collectors.toList());
+        return ficheros;
     }
 
     @Transactional

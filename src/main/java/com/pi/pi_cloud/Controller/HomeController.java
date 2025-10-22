@@ -2,10 +2,13 @@ package com.pi.pi_cloud.Controller;
 
 import com.pi.pi_cloud.Model.Departamento;
 import com.pi.pi_cloud.Model.Fichero;
-import com.pi.pi_cloud.Service.DepartamentoService;
+import com.pi.pi_cloud.Model.Organizacion;
+import com.pi.pi_cloud.Model.Usuario;
 import com.pi.pi_cloud.Service.FicheroService;
 import com.pi.pi_cloud.dto.FicheroData;
-import jakarta.annotation.Resource;
+import com.pi.pi_cloud.repository.DepartamentoRepository;
+import com.pi.pi_cloud.repository.OrganizacionRepository;
+import com.pi.pi_cloud.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -20,7 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 public class HomeController {
@@ -28,9 +30,35 @@ public class HomeController {
     @Autowired
     FicheroService ficheroService;
 
+    @Autowired
+    OrganizacionRepository organizacionRepository;
+
+    @Autowired
+    DepartamentoRepository departamentoRepository;
+
+    @Autowired
+    UserRepository userRepository;
+
+    private Usuario user;
+
+    private boolean isDataInitialized = false; //
+
     @GetMapping("home")
     public String home(Model model) {
-        List<FicheroData> ficheros = ficheroService.getFicherosFromDepartamento();
+
+        if (!isDataInitialized) {
+            Organizacion organizacion = new Organizacion("example_org_1");
+            organizacion = organizacionRepository.save(organizacion);
+            Departamento departamento = new Departamento("example_dep_1", organizacion);
+            departamento = departamentoRepository.save(departamento);
+            user = new Usuario("example@example.com","12345",true,departamento);
+            user = userRepository.save(user);
+
+            isDataInitialized = true;
+        }
+
+
+        List<FicheroData> ficheros = ficheroService.getFicherosFromUsuario(user);
 
         if (ficheros != null) {
             model.addAttribute("ficheros",ficheros);
@@ -41,7 +69,7 @@ public class HomeController {
     }
 
     @PostMapping("upload")
-    public String uploadFile(@RequestParam("file")MultipartFile file, Model model) throws IOException {
+    public String uploadFile(@RequestParam("file") MultipartFile file, Model model) throws IOException {
 
         ficheroService.addFile(file);
 
@@ -52,7 +80,6 @@ public class HomeController {
     public ResponseEntity<byte[]> download(@PathVariable(value="id") Long fileId) {
 
         Fichero fichero = ficheroService.findById(fileId).orElse(null);
-
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(MediaType.APPLICATION_OCTET_STREAM_VALUE))

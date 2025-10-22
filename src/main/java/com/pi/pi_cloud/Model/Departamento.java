@@ -15,19 +15,18 @@ public class Departamento {
 
     private String nombre;
 
-    private String organizacion;
+    @ManyToOne
+    @JoinColumn(name = "organizacion_id")
+    private Organizacion organizacion;
 
     @OneToMany(mappedBy = "departamento")
-    Set<Fichero> ficheros = new HashSet<>();
-
-    @OneToMany(mappedBy = "departamento")
-    Set<User> usuarios = new HashSet<>();
+    Set<Usuario> usuarios = new HashSet<>();
 
     public Departamento() {
 
     }
 
-    public Departamento(String nombre, String organizacion) {
+    public Departamento(String nombre,Organizacion organizacion) {
         this.nombre = nombre;
         this.organizacion = organizacion;
     }
@@ -48,27 +47,21 @@ public class Departamento {
         this.nombre = nombre;
     }
 
-    public String getOrganizacion() {
+    public Organizacion getOrganizacion() {
         return organizacion;
     }
 
-    public void setOrganizacion(String organizacion) {
+    public void setOrganizacion(Organizacion organizacion) {
         this.organizacion = organizacion;
     }
 
-    public Set<Fichero> getFicheros() {
-        return ficheros;
-    }
-
-    public void setFicheros(Set<Fichero> ficheros) {
-        this.ficheros = ficheros;
-    }
-
-    public Set<User> getUsuarios() {
+    public Set<Usuario> getUsuarios() {
         return usuarios;
     }
 
-    public void setUsuarios(Set<User> usuarios) {
+    public void setUsuarios(Set<Usuario> usuarios) {
         this.usuarios = usuarios;
     }
+
+
 }

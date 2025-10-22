@@ -19,8 +19,19 @@ public class Fichero {
     private SecretKey claveCifrada;
 
     @ManyToOne
-    @JoinColumn(name = "departamento_id")
-    private Departamento departamento;
+    @JoinColumn(name = "user_id")
+    private Usuario usuario;
+
+    public Fichero() {
+
+    }
+
+    public Fichero(String nombre, byte[] datos, SecretKey claveCifrada, Usuario usuario) {
+        this.nombre = nombre;
+        this.datos = datos;
+        this.claveCifrada = claveCifrada;
+        this.usuario = usuario;
+    }
 
     public Long getId() {
         return id;
@@ -54,11 +65,11 @@ public class Fichero {
         this.claveCifrada = claveCifrada;
     }
 
-    public Departamento getDepartamento() {
-        return departamento;
+    public Usuario getUsuario() {
+        return usuario;
     }
 
-    public void setDepartamento(Departamento departamento) {
-        this.departamento = departamento;
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 }
