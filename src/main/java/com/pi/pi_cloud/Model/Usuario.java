@@ -5,7 +5,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -20,8 +22,8 @@ public class Usuario implements Serializable {
     private String password;
     private boolean isAdmin;
 
-    @OneToMany(mappedBy = "usuario")
-    Set<Fichero> ficheros = new HashSet<>();
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    List<Fichero> ficheros = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "departamento_id")
@@ -79,12 +81,11 @@ public class Usuario implements Serializable {
         this.departamento = departamento;
     }
 
-    public Set<Fichero> getFicheros() {
+    public List<Fichero> getFicheros() {
         return ficheros;
     }
 
-    public void setFicheros(Set<Fichero> ficheros) {
+    public void setFicheros(List<Fichero> ficheros) {
         this.ficheros = ficheros;
     }
-
 }

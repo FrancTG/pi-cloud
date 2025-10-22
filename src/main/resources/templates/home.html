@@ -17,14 +17,14 @@
             <div class="col d-flex justify-content-center align-items-center">
                 <form method="post" action="/upload" enctype="multipart/form-data">
                     <input type="file" name="file" required />
-                    <button type="submit">Subir archivo</button>
+                    <button class="btn btn-success" type="submit">Subir archivo</button>
                 </form>
             </div>
         </div>
 
         <div class="row">
-            <div class="d-flex" >
-                <div class="m-2" th:each="fichero: ${ficheros}">
+            <div class="d-flex flex-wrap" >
+                <div class="m-5" th:each="fichero: ${ficheros}">
                     <p th:text="${fichero.nombre}"></p>
                     <a class="btn btn-primary" th:href="@{/fichero/{idFile}/download(idFile=${fichero.id})}">Descargar fichero</a>
                 </div>

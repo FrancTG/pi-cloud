@@ -5,6 +5,7 @@ import com.pi.pi_cloud.Model.Fichero;
 import com.pi.pi_cloud.Model.Organizacion;
 import com.pi.pi_cloud.Model.Usuario;
 import com.pi.pi_cloud.Service.FicheroService;
+import com.pi.pi_cloud.Service.UserService;
 import com.pi.pi_cloud.dto.FicheroData;
 import com.pi.pi_cloud.repository.DepartamentoRepository;
 import com.pi.pi_cloud.repository.OrganizacionRepository;
@@ -39,12 +40,18 @@ public class HomeController {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    UserService userService;
+
+    // Usuario logueado
     private Usuario user;
 
     private boolean isDataInitialized = false; //
 
     @GetMapping("home")
     public String home(Model model) {
+
+        // Se inicializan los datos cuando no existen organizacion -> departamento -> usuario
 
         if (!isDataInitialized) {
             Organizacion organizacion = new Organizacion("example_org_1");
@@ -57,13 +64,11 @@ public class HomeController {
             isDataInitialized = true;
         }
 
+        List<FicheroData> ficheros = userService.getFicherosFromUsuario(user.getId());
 
-        List<FicheroData> ficheros = ficheroService.getFicherosFromUsuario(user);
-
-        if (ficheros != null) {
+        if (!ficheros.isEmpty()) {
             model.addAttribute("ficheros",ficheros);
         }
-
 
         return "home";
     }
@@ -71,7 +76,7 @@ public class HomeController {
     @PostMapping("upload")
     public String uploadFile(@RequestParam("file") MultipartFile file, Model model) throws IOException {
 
-        ficheroService.addFile(file);
+        ficheroService.addFile(file,user);
 
         return "redirect:/home";
     }
@@ -79,7 +84,7 @@ public class HomeController {
     @GetMapping("/fichero/{id}/download")
     public ResponseEntity<byte[]> download(@PathVariable(value="id") Long fileId) {
 
-        Fichero fichero = ficheroService.findById(fileId).orElse(null);
+        Fichero fichero = ficheroService.findByIdDescifrado(fileId);
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(MediaType.APPLICATION_OCTET_STREAM_VALUE))

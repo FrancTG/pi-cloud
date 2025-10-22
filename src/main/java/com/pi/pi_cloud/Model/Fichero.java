@@ -19,7 +19,7 @@ public class Fichero {
     private SecretKey claveCifrada;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
     public Fichero() {

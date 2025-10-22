@@ -34,9 +34,9 @@ public class FicheroService {
 
 
     @Transactional
-    public void addFile(MultipartFile file) throws IOException {
+    public void addFile(MultipartFile file, Usuario usuario) throws IOException {
 
-        Usuario user = userRepository.findById(0L).orElse(null);
+        // La clave sk se debe cifrar con una clave del servidor
 
         try {
             SecretKey sk = Cifrado.generarClaveAes();
@@ -46,7 +46,7 @@ public class FicheroService {
             fichero.setNombre(file.getOriginalFilename()); //Falta cifrarlo?
             fichero.setDatos(res.toBlob());
             fichero.setClaveCifrada(sk);
-            fichero.setUsuario(user);
+            fichero.setUsuario(usuario);
             ficheroRepository.save(fichero);
 
         } catch (GeneralSecurityException ex) {
@@ -57,13 +57,27 @@ public class FicheroService {
 
     @Transactional
     public List<FicheroData> getFicherosFromUsuario(Usuario user) {
-        List<FicheroData> ficheros = user.getFicheros().stream().map(fichero -> modelMapper.map(fichero,FicheroData.class)).collect(Collectors.toList());
-        return ficheros;
+        return ficheroRepository.findByUsuario(user).stream().map(fichero -> modelMapper.map(fichero, FicheroData.class)).collect(Collectors.toList());
     }
 
     @Transactional
     public Optional<Fichero> findById(Long id) {
         return ficheroRepository.findById(id);
+    }
+
+    public Fichero findByIdDescifrado(Long id) {
+
+        // Fichero.getClaveCifrada() se debe decifrar cuando se cifre con la clave del servidor
+
+        Fichero fichero = null;
+        try {
+            fichero = ficheroRepository.findById(id).orElse(null);
+            fichero.setDatos(Cifrado.decryptAesGcm(fichero.getDatos(), fichero.getClaveCifrada()));
+
+        } catch (GeneralSecurityException ex) {
+
+        }
+        return fichero;
     }
 
 }
