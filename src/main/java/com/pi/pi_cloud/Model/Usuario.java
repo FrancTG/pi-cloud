@@ -22,6 +22,18 @@ public class Usuario implements Serializable {
     private String password;
     private boolean isAdmin;
 
+    @NotNull
+    private String salt;
+
+    @Column(name = "totp_secret")
+    private String totpSecret; // Clave secreta para Google Authenticator
+
+    @Column(length = 4096)
+    private String publicKey;  // Clave pública RSA (codificada Base64)
+
+    @Column(length = 4096)
+    private String encryptedPrivateKey; // Clave privada cifrada con PBKDF2
+
     @OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     List<Fichero> ficheros = new ArrayList<>();
 
@@ -34,9 +46,10 @@ public class Usuario implements Serializable {
 
     }
 
-    public Usuario(String email, String password, boolean isAdmin, Departamento departamento) {
+    public Usuario(String email, String password, boolean isAdmin, Departamento departamento, String salt) {
         this.email = email;
         this.password = password;
+        this.salt = salt;
         this.isAdmin = isAdmin;
         this.departamento = departamento;
     }
@@ -57,12 +70,20 @@ public class Usuario implements Serializable {
         this.email = email;
     }
 
-    public String getPassword() {
+    public String getPasswordHash() {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPasswordHash(String passwordHash) {
+        this.password = passwordHash;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
 
     public boolean isAdmin() {
@@ -87,5 +108,29 @@ public class Usuario implements Serializable {
 
     public void setFicheros(List<Fichero> ficheros) {
         this.ficheros = ficheros;
+    }
+
+    public String getTotpSecret() {
+        return totpSecret;
+    }
+
+    public void setTotpSecret(String totpSecret) {
+        this.totpSecret = totpSecret;
+    }
+
+    public String getPublicKey() {
+        return publicKey;
+    }
+
+    public void setPublicKey(String publicKey) {
+        this.publicKey = publicKey;
+    }
+
+    public String getEncryptedPrivateKey() {
+        return encryptedPrivateKey;
+    }
+
+    public void setEncryptedPrivateKey(String encryptedPrivateKey) {
+        this.encryptedPrivateKey = encryptedPrivateKey;
     }
 }
