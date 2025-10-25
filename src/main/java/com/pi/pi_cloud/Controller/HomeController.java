@@ -58,7 +58,7 @@ public class HomeController {
             organizacion = organizacionRepository.save(organizacion);
             Departamento departamento = new Departamento("example_dep_1", organizacion);
             departamento = departamentoRepository.save(departamento);
-            user = new Usuario("example@example.com","12345",true,departamento);
+            user = new Usuario("example@example.com","12345",true,departamento, "12345");
             user = userRepository.save(user);
 
             isDataInitialized = true;
