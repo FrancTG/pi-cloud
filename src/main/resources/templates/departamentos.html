@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://wwww.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{layout/plantilla :: head}">
+    <title>Inicio</title>
+</head>
+<body>
+    <section th:replace="~{layout/botonesAgregar :: botonesAgregarDep}"></section>
+    <section th:replace="~{layout/agregarDepartamento :: agregarDepartamento}"></section>
+    <section th:replace="~{layout/listadoDepartamentos :: listadoDepartamentos}"></section>
+</body>
+</html>

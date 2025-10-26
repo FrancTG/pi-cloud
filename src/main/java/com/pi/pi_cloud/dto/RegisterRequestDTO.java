@@ -1,10 +1,12 @@
 package com.pi.pi_cloud.dto;
 
+import com.pi.pi_cloud.Model.Departamento;
+
 public class RegisterRequestDTO {
     private String email;
     private String password;
     private boolean isAdmin;
-    private Long departamentoId;
+    private Departamento departamentoId;
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
@@ -15,6 +17,6 @@ public class RegisterRequestDTO {
     public boolean isAdmin() { return isAdmin; }
     public void setAdmin(boolean admin) { isAdmin = admin; }
 
-    public Long getDepartamentoId() { return departamentoId; }
-    public void setDepartamentoId(Long departamentoId) { this.departamentoId = departamentoId; }
+    public Departamento getDepartamentoId() { return departamentoId; }
+    public void setDepartamentoId(Departamento departamentoId) { this.departamentoId = departamentoId; }
 }

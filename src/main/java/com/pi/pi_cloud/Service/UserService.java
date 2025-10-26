@@ -1,5 +1,6 @@
 package com.pi.pi_cloud.Service;
 
+import com.pi.pi_cloud.Model.Departamento;
 import com.pi.pi_cloud.Model.Fichero;
 import com.pi.pi_cloud.Model.Usuario;
 import com.pi.pi_cloud.dto.FicheroData;
@@ -56,6 +57,10 @@ public class UserService {
         return usuario.getFicheros().stream().map(fichero -> modelMapper.map(fichero, FicheroData.class)).collect(Collectors.toList());
     }
 
+    public void eliminarUsuario(Usuario usuario) {
+        userRepository.delete(usuario);
+
+    }
 
     /**
      * Registra un nuevo usuario con contraseña protegida (PBKDF2),
@@ -72,6 +77,7 @@ public class UserService {
         String publicKey = RSAUtil.encodeKey(keyPair.getPublic());
         String privateKey = RSAUtil.encodeKey(keyPair.getPrivate());
 
+
         Usuario usuario = new Usuario();
         usuario.setEmail(dto.getEmail());
         usuario.setSalt(salt);
@@ -80,6 +86,7 @@ public class UserService {
         usuario.setPublicKey(publicKey);
         usuario.setEncryptedPrivateKey(privateKey);
         usuario.setAdmin(dto.isAdmin());
+        usuario.setDepartamento(dto.getDepartamentoId());
 
         return userRepository.save(usuario);
     }

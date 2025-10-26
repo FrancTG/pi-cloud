@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://wwww.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Agregar Departamento</title>
+    <meta charset="UTF-8"/>
+</head>
+<body>
+<section th:fragment="agregarDepartamento">
+    <div class="modal fade" id="agregarDepartamento" tabindex="-1" aria-labelledby="agregarDepartamento" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="agregarDepartamentoLabel">Crear Departamento</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form th:action="@{/dep/guardar}" th:object="${departamento}" method="POST" class="form-floating was-validated" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="nombre" class="form-label">Nombre</label>
+                            <input type="texto" class="form-control" id="nombre" name="nombre" required>
+                        </div>
+                        <div class="my-4">
+                            <label for="organizacion">Elige un organizacion:</label>
+                            <select class="form-select" id="organizacion" name="organizacion" aria-label="Parte del cuerpo" required>
+                                <option th:each="org : ${orgs}" th:value=${org.id} th:text="${org.nombre}">
+                                </option>
+                            </select>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

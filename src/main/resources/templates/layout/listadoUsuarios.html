@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://wwww.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Listado Usuarios</title>
+</head>
+
+<body>
+<section th:fragment="listadoUsuarios" id="listadoUsuarios">
+    <div class="container mt-5" th:if="${users != null and !users.empty}">
+        <h2 class="mb-4 text-center">Lista de Usuarios</h2>
+            <div class="table-responsive shadow rounded">
+                <table class="table table-striped align-middle">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Email</th>
+                        <th>Departamento</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="user : ${users}">
+                        <td th:text="${user.id}"></td>
+                        <td th:text="${user.email}"></td>
+                        <td th:text="${user.departamento.nombre}"></td>
+
+                        <td>
+                            <a class="btn btn-sm btn-primary">Edit</a>
+                            <a th:href="@{/eliminaruser(id=${user.id})}" class="btn btn-sm btn-danger">Delete</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+        </div>
+    </div>
+    <div class="text-center p-2"
+         th:if="${users == null or users.empty}">
+        <span>Lista de usuarios vacía</span>
+    </div>
+
+</section>
+</body>
+</html>

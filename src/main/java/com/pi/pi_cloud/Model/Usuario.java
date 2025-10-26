@@ -3,6 +3,7 @@ package com.pi.pi_cloud.Model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
+@Data
 @Table(name = "usuario")
 public class Usuario implements Serializable {
 

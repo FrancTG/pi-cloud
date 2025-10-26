@@ -9,5 +9,4 @@ public class PiCloudApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(PiCloudApplication.class, args);
 	}
-
 }

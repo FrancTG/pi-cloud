@@ -1,11 +1,13 @@
 package com.pi.pi_cloud.Model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Data
 @Table(name = "departamento")
 public class Departamento {
 
@@ -19,7 +21,7 @@ public class Departamento {
     @JoinColumn(name = "organizacion_id")
     private Organizacion organizacion;
 
-    @OneToMany(mappedBy = "departamento")
+    @OneToMany(mappedBy = "departamento", cascade = { CascadeType.DETACH })
     Set<Usuario> usuarios = new HashSet<>();
 
     public Departamento() {

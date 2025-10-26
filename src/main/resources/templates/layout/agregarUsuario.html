@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://wwww.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Agregar Usuario</title>
+    <meta charset="UTF-8"/>
+</head>
+<body>
+<section th:fragment="agregarUsuario">
+    <div class="modal fade" id="agregarUsuario" tabindex="-1" aria-labelledby="agregarUsuario" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="agregarUsuarioLabel">Crear usuario</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form th:action="@{/user/guardar}" th:object="${usuario}" method="POST" class="form-floating was-validated" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <div class="my-4">
+                            <label for="departamentoId">Elige un departamento:</label>
+                            <select class="form-select" id="departamentoId" name="departamentoId" aria-label="Parte del cuerpo" required>
+                                <option th:each="dep : ${deps}" th:value=${dep.id} th:text="${dep.nombre}">
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="isadmin">
+                            <label class="form-check-label" for="isadmin">
+                                Default checkbox
+                            </label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>
