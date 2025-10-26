@@ -13,17 +13,18 @@ public class SecurityConfig {
         http
                 // Desactiva CSRF (para permitir peticiones POST JSON sin token)
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/h2-console/**") // ❗ Desactiva CSRF para H2
+                        .ignoringRequestMatchers("/h2-console/**") // Desactiva CSRF para H2
                         .disable()
                 )
                 .headers(headers -> headers
-                        .frameOptions(frame -> frame.disable()) // ❗ Permite iframes
+                        .frameOptions(frame -> frame.disable()) // Permite iframes
                 )
 
 
                 // Define qué endpoints son públicos
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
+                                "/**",
                                 "/api/auth/login",
                                 "/api/auth/register",
                                 "/api/auth/qr/**",
@@ -31,6 +32,10 @@ public class SecurityConfig {
                                 "/h2-console/**",
                                 "/css/**",
                                 "/dashboard/**",
+                                "/users/**",
+                                "/departamentos/**",
+                                "/eliminardep/**",
+                                "/dep/guardar/**",
                                 "/js/**"
                         ).permitAll()
                         .anyRequest().authenticated() // el resto requiere sesión

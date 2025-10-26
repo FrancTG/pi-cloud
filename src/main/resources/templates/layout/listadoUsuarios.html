@@ -24,7 +24,7 @@
                     <tr th:each="user : ${users}">
                         <td th:text="${user.id}"></td>
                         <td th:text="${user.email}"></td>
-                        <td th:text="${user.departamento.nombre}"></td>
+                        <td th:text="${user.departamento?.nombre} ?: 'No asignado'"></td>
 
                         <td>
                             <a class="btn btn-sm btn-primary">Edit</a>

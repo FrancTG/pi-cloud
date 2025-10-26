@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.io.IOException;
@@ -41,12 +42,17 @@ public class DepartamentoController {
         return "departamentos";
     }
 
+//    @GetMapping("/eliminardep")
+//    public RedirectView eliminar(Departamento departamento) {
+//        depService.eliminarDepartamento(departamento);
+//        return new RedirectView("/departamentos");
+//    }
+
     @GetMapping("/eliminardep")
-    public RedirectView eliminar(Departamento departamento) {
-        depService.eliminarDepartamento(departamento);
+    public RedirectView eliminar(@RequestParam("id") Long id) {
+        depService.eliminarDepartamentoPorId(id);
         return new RedirectView("/departamentos");
     }
-
 
     @PostMapping("/dep/guardar")
     public RedirectView guardar(@Valid Departamento departamento, Errors errores) throws IOException {

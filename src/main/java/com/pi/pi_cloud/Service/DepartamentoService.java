@@ -33,4 +33,8 @@ public class DepartamentoService {
         departamentoRepository.delete(departamento);
 
     }
+
+    public void eliminarDepartamentoPorId(Long id) {
+        departamentoRepository.deleteById(id);
+    }
 }
