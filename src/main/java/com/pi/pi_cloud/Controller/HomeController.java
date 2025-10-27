@@ -10,6 +10,7 @@ import com.pi.pi_cloud.dto.FicheroData;
 import com.pi.pi_cloud.repository.DepartamentoRepository;
 import com.pi.pi_cloud.repository.OrganizacionRepository;
 import com.pi.pi_cloud.repository.UserRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -46,25 +47,12 @@ public class HomeController {
     // Usuario logueado
     private Usuario user;
 
-    private boolean isDataInitialized = false; //
-
     @GetMapping("home")
-    public String home(Model model) {
+    public String home(Model model, HttpSession session) {
 
-        // Se inicializan los datos cuando no existen organizacion -> departamento -> usuario
-
-        if (!isDataInitialized) {
-            Organizacion organizacion = new Organizacion("example_org_1");
-            organizacion = organizacionRepository.save(organizacion);
-            Departamento departamento = new Departamento("example_dep_1", organizacion);
-            departamento = departamentoRepository.save(departamento);
-            user = new Usuario("example@example.com","12345",true,departamento, "12345");
-            user = userRepository.save(user);
-
-            isDataInitialized = true;
-        }
-
-        List<FicheroData> ficheros = userService.getFicherosFromUsuario(user.getId());
+        String sessionEmail = session.getAttribute("email").toString();
+        Usuario usuario = userRepository.findByEmail(sessionEmail).orElse(null);
+        List<FicheroData> ficheros = userService.getFicherosFromUsuario(usuario.getId());
 
         if (!ficheros.isEmpty()) {
             model.addAttribute("ficheros",ficheros);
@@ -74,17 +62,17 @@ public class HomeController {
     }
 
     @PostMapping("upload")
-    public String uploadFile(@RequestParam("file") MultipartFile file, Model model) throws IOException {
+    public String uploadFile(@RequestParam("file") MultipartFile file, HttpSession session) throws IOException {
 
-        ficheroService.addFile(file,user);
+        ficheroService.addFile(file,session);
 
         return "redirect:/home";
     }
 
     @GetMapping("/fichero/{id}/download")
-    public ResponseEntity<byte[]> download(@PathVariable(value="id") Long fileId) {
+    public ResponseEntity<byte[]> download(@PathVariable(value="id") Long fileId, HttpSession session) {
 
-        Fichero fichero = ficheroService.findByIdDescifrado(fileId);
+        Fichero fichero = ficheroService.findByIdDescifrado(fileId,session);
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(MediaType.APPLICATION_OCTET_STREAM_VALUE))

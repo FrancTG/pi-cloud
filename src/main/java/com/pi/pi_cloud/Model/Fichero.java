@@ -16,6 +16,7 @@ public class Fichero {
     @Lob
     private byte[] datos;
 
+    @Lob
     private SecretKey claveCifrada;
 
     @ManyToOne
