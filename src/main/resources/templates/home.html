@@ -5,19 +5,12 @@
 <body>
 <div class="d-flex vh-100">
 
-    <div th:replace="~{fragments :: sidebar}"></div>
+    <div th:replace="~{fragments :: sidebar (active='home')}"></div>
 
     <!-- Contenido principal -->
     <div class="container-fluid overflow-auto">
-        <div class="row mt-3">
-            <div class="col fs-2">Archivos</div>
-            <div class="col d-flex justify-content-end align-items-center">
-                <span class="me-3"> <b th:text="${email}">usuario@dominio.com</b></span>
-                <form id="logoutForm">
-                    <button type="submit" class="btn btn-outline-danger">Cerrar sesión</button>
-                </form>
-            </div>
-        </div>
+
+        <div th:replace="~{fragments::header (title='Archivos')}"></div>
 
         <div class="row mt-3">
             <div class="col d-flex justify-content-center align-items-center">
@@ -44,16 +37,6 @@
 </div>
 
 <div th:replace="~{fragments::bootstrap}"></div>
-
-<script>
-document.getElementById("logoutForm").addEventListener("submit", async function(e) {
-    e.preventDefault();
-    const response = await fetch("/api/auth/logout");
-    const text = await response.text();
-    document.getElementById("logoutMessage").innerHTML = " " + text;
-    setTimeout(() => window.location.href = "/login", 1000);
-});
-</script>
 
 </body>
 </html>

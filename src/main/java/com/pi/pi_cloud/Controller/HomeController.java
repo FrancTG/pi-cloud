@@ -47,16 +47,26 @@ public class HomeController {
     // Usuario logueado
     private Usuario user;
 
+    @GetMapping("/")
+    public String rootGet() {
+        return "redirect:/login";
+    }
+
     @GetMapping("home")
     public String home(Model model, HttpSession session) {
 
-        String sessionEmail = session.getAttribute("email").toString();
-        Usuario usuario = userRepository.findByEmail(sessionEmail).orElse(null);
+        String sessionEmail = (String) session.getAttribute("email");
+        if (sessionEmail == null) {
+            return "home";
+        }
+
+        Usuario usuario = userRepository.findByEmail(sessionEmail.toString()).orElse(null);
         List<FicheroData> ficheros = userService.getFicherosFromUsuario(usuario.getId());
 
         if (!ficheros.isEmpty()) {
             model.addAttribute("ficheros",ficheros);
         }
+
 
         return "home";
     }

@@ -6,8 +6,21 @@
     <title>Inicio</title>
 </head>
 <body>
-    <section th:replace="~{layout/botonesAgregar :: botonesAgregarDep}"></section>
-    <section th:replace="~{layout/agregarDepartamento :: agregarDepartamento}"></section>
-    <section th:replace="~{layout/listadoDepartamentos :: listadoDepartamentos}"></section>
+<div class="d-flex vh-100">
+
+    <div th:replace="~{fragments :: sidebar (active='departamentos')}"></div>
+
+    <!-- Contenido principal -->
+    <div class="container-fluid overflow-auto">
+
+        <div th:replace="~{fragments::header (title='Departamentos')}"></div>
+
+        <section th:replace="~{layout/botonesAgregar :: botonesAgregarDep}"></section>
+        <section th:replace="~{layout/agregarDepartamento :: agregarDepartamento}"></section>
+        <section th:replace="~{layout/listadoDepartamentos :: listadoDepartamentos}"></section>
+
+        <div id="logoutMessage" class="text-center mt-3"></div>
+    </div>
+</div>
 </body>
 </html>

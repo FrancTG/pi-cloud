@@ -41,9 +41,12 @@ public class FicheroService {
     @Transactional
     public void addFile(MultipartFile file, HttpSession session) throws IOException {
 
-        String sessionEmail = session.getAttribute("email").toString();
-        Usuario usuario = userRepository.findByEmail(sessionEmail).orElse(null);
+        String sessionEmail = (String) session.getAttribute("email");
+        if (sessionEmail == null) {
+            return;
+        }
 
+        Usuario usuario = userRepository.findByEmail(sessionEmail).orElse(null);
         if (usuario == null){
             return;
         }
@@ -63,7 +66,6 @@ public class FicheroService {
             fichero.setClaveCifrada(claveDatosCifrada);
             fichero.setUsuario(usuario);
             ficheroRepository.save(fichero);
-
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
@@ -82,7 +84,11 @@ public class FicheroService {
 
     public Fichero findByIdDescifrado(Long id, HttpSession session) {
 
-        String sessionEmail = session.getAttribute("email").toString();
+        String sessionEmail = (String) session.getAttribute("email");
+        if (sessionEmail == null) {
+            return null;
+        }
+
         Usuario usuario = userRepository.findByEmail(sessionEmail).orElse(null);
 
         try {
