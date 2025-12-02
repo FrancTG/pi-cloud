@@ -41,7 +41,7 @@
     </ul>
 </div>
 
-<div th:fragment="header (title)" class="row my-4">
+<div th:fragment="header (title, email)" class="row my-4">
     <div class="col fs-2" th:text="${title}"></div>
     <div class="col d-flex justify-content-end align-items-center">
         <span class="me-3"> <b th:text="${email}">usuario@dominio.com</b></span>
@@ -51,6 +51,7 @@
     </div>
     <script>
         document.getElementById("logoutForm").addEventListener("submit", async function(e) {
+            console.log("Logout");
             e.preventDefault();
             const response = await fetch("/api/auth/logout");
             const text = await response.text();

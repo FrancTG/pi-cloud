@@ -5,6 +5,7 @@ import com.pi.pi_cloud.Model.Departamento;
 import com.pi.pi_cloud.Service.DepartamentoService;
 import com.pi.pi_cloud.Service.OrganizacionService;
 import com.pi.pi_cloud.Service.UserService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,7 +31,7 @@ public class DepartamentoController {
     OrganizacionService orgService;
 
     @GetMapping("/departamentos")
-    public String usersList(Model model) {
+    public String usersList(Model model, HttpSession session) {
         //var users = userService.getAllUsers();
         var deps = depService.getAllDepartments();
         var orgs = orgService.getAllOrgs();
@@ -38,6 +39,11 @@ public class DepartamentoController {
         //model.addAttribute("users",users);
         model.addAttribute("deps",deps);
         model.addAttribute("orgs",orgs);
+
+        String sessionEmail = (String) session.getAttribute("email");
+        if (sessionEmail != null) {
+            model.addAttribute("email",sessionEmail);
+        }
 
         return "departamentos";
     }

@@ -67,7 +67,7 @@ public class HomeController {
             model.addAttribute("ficheros",ficheros);
         }
 
-
+        model.addAttribute("email",sessionEmail);
         return "home";
     }
 

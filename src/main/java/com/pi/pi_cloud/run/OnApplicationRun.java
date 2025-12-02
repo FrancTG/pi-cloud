@@ -6,6 +6,8 @@ import java.util.Set;
 import com.pi.pi_cloud.Model.Organizacion;
 import com.pi.pi_cloud.Model.Usuario;
 import com.pi.pi_cloud.Model.Departamento;
+import com.pi.pi_cloud.Service.UserService;
+import com.pi.pi_cloud.dto.RegisterRequestDTO;
 import com.pi.pi_cloud.dto.UserData;
 import com.pi.pi_cloud.repository.DepartamentoRepository;
 import com.pi.pi_cloud.repository.OrganizacionRepository;
@@ -13,6 +15,7 @@ import com.pi.pi_cloud.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 
@@ -23,6 +26,9 @@ public class OnApplicationRun implements CommandLineRunner{
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private DepartamentoRepository departamentoRepository;
@@ -47,45 +53,34 @@ public class OnApplicationRun implements CommandLineRunner{
 
             //Generamos roles por defecto: role de admin y rol de user
 
-            /*Organizacion org = new Organizacion();
-            org.setDepartamentos();
-            org.setNombre("YUKA");
-
-
-
-            Departamento dep = new Departamento();
-            dep.setNombre("HHRR");
-            dep.setOrganizacion(org);
-            dep.setUsuarios(null);
-            dep.setOrganizacion(org);*/
-
             Usuario user;
+            RegisterRequestDTO requestDTO;
 
+            try{
+                Organizacion organizacion = new Organizacion("example_org_1");
+                organizacion = organizacionRepository.save(organizacion);
+                Departamento departamento = new Departamento("example_dep_1", organizacion);
+                departamento = departamentoRepository.save(departamento);
+                requestDTO = new RegisterRequestDTO("admin@example.com","12345",true,departamento);
+                user = userService.registerUser(requestDTO);
 
-            Organizacion organizacion = new Organizacion("example_org_1");
-            organizacion = organizacionRepository.save(organizacion);
-            Departamento departamento = new Departamento("example_dep_1", organizacion);
-            departamento = departamentoRepository.save(departamento);
-            user = new Usuario("example@example.com","12345",false,departamento, "12345");
-            user = userRepository.save(user);
+                Organizacion organizacion2 = new Organizacion("example_org_2");
+                organizacion2 = organizacionRepository.save(organizacion2);
+                Departamento departamento2 = new Departamento("example_dep_2", organizacion);
+                departamento2 = departamentoRepository.save(departamento2);
+                requestDTO = new RegisterRequestDTO("example2@example.com","12345",false,departamento2);
+                user = userService.registerUser(requestDTO);
 
-            Organizacion organizacion2 = new Organizacion("example_org_2");
-            organizacion2 = organizacionRepository.save(organizacion2);
-            Departamento departamento2 = new Departamento("example_dep_2", organizacion);
-            departamento2 = departamentoRepository.save(departamento2);
-            user = new Usuario("example2@example.com","12345",true,departamento2, "12345");
-            user = userRepository.save(user);
+                Organizacion organizacion3 = new Organizacion("example_org_3");
+                organizacion3 = organizacionRepository.save(organizacion3);
+                Departamento departamento3 = new Departamento("example_dep_3", organizacion3);
+                departamento3 = departamentoRepository.save(departamento3);
+                requestDTO = new RegisterRequestDTO("example3@example.com","12345",false,departamento3);
+                user = userService.registerUser(requestDTO);
+            } catch (Exception ex) {
+                ResponseEntity.badRequest().body("Error al registrar usuarios por defecto: " + ex.getMessage());
+            }
 
-            Organizacion organizacion3 = new Organizacion("example_org_3");
-            organizacion3 = organizacionRepository.save(organizacion3);
-            Departamento departamento3 = new Departamento("example_dep_3", organizacion3);
-            departamento3 = departamentoRepository.save(departamento3);
-            user = new Usuario("example3@example.com","12345",true,departamento3, "12345");
-            user = userRepository.save(user);
-
-
-        }else{
-            return;
         }
     }
 }

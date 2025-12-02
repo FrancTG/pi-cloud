@@ -5,6 +5,7 @@ import com.pi.pi_cloud.Service.DepartamentoService;
 import com.pi.pi_cloud.Service.UserService;
 import com.pi.pi_cloud.dto.RegisterRequestDTO;
 import com.pi.pi_cloud.dto.UserData;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -32,12 +33,17 @@ public class UserController {
     RegisterRequestDTO userRegister;
 
     @GetMapping("/users")
-    public String usersList(Model model) {
+    public String usersList(Model model, HttpSession session) {
         var users = userService.getAllUsers();
         var deps = depService.getAllDepartments();
 
         model.addAttribute("users",users);
         model.addAttribute("deps",deps);
+
+        String sessionEmail = (String) session.getAttribute("email");
+        if (sessionEmail != null) {
+            model.addAttribute("email",sessionEmail);
+        }
 
         return "panel";
     }

@@ -8,6 +8,13 @@ public class RegisterRequestDTO {
     private boolean isAdmin;
     private Departamento departamentoId;
 
+    public RegisterRequestDTO(String email, String password, boolean isAdmin, Departamento departamentoId) {
+        this.email = email;
+        this.password = password;
+        this.isAdmin = isAdmin;
+        this.departamentoId = departamentoId;
+    }
+
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
