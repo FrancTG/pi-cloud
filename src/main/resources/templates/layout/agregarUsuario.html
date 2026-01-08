@@ -33,9 +33,18 @@
                             </select>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="isadmin">
-                            <label class="form-check-label" for="isadmin">
-                                Default checkbox
+                            <input class="form-check-input" type="checkbox" name="isAdmin" value="true">
+                            <input type="hidden" name="isAdmin" value="false">
+                            <label class="form-check-label" >
+                                Cuenta administrativa
+                            </label>
+                        </div>
+                        <div class="form-check">
+
+                            <input class="form-check-input" type="checkbox"  name="requiresTOTP" value="true">
+                            <input type="hidden" name="requiresTOTP" value="false">
+                            <label class="form-check-label">
+                                Requiere autenticación multifactor
                             </label>
                         </div>
                     </div>

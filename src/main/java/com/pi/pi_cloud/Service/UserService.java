@@ -69,7 +69,7 @@ public class UserService {
     public Usuario registerUser(RegisterRequestDTO dto) throws Exception {
         String salt = PBKDF2Util.generateSalt();
         String hashedPassword = PBKDF2Util.hashPassword(dto.getPassword(), salt);
-        String totpSecret = TOTPUtil.generateSecret();
+
 
         // Generar par de claves RSA
         KeyPair keyPair = RSAUtil.generateKeyPair();
@@ -81,11 +81,16 @@ public class UserService {
         usuario.setEmail(dto.getEmail());
         usuario.setSalt(salt);
         usuario.setPassword(hashedPassword);
-        usuario.setTotpSecret(totpSecret);
         usuario.setPublicKey(publicKey);
         usuario.setEncryptedPrivateKey(privateKey);
         usuario.setAdmin(dto.isAdmin());
         usuario.setDepartamento(dto.getDepartamentoId());
+
+        System.out.println("TOTTTPPPPP: " + dto.isRequiresTOTP());
+        if (dto.isRequiresTOTP()){
+            String totpSecret = TOTPUtil.generateSecret();
+            usuario.setTotpSecret(totpSecret);
+        }
 
         return userRepository.save(usuario);
     }
@@ -102,6 +107,12 @@ public class UserService {
 
         boolean validPassword = PBKDF2Util.validatePassword(dto.getPassword(), usuario.getPassword(), usuario.getSalt());
         if (!validPassword) return false;
+
+        // Si el usuario no tiene doble factor puede iniciar sesión (Cuentas administradoras)
+        //System.out.println("TOTPPPPPPPP: " + usuario.getTotpSecret());
+        if (usuario.getTotpSecret() == null) {
+            return true;
+        }
 
         return TOTPUtil.verifyCode(usuario.getTotpSecret(), dto.getTotpCode());
     }

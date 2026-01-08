@@ -61,21 +61,21 @@ public class OnApplicationRun implements CommandLineRunner{
                 organizacion = organizacionRepository.save(organizacion);
                 Departamento departamento = new Departamento("example_dep_1", organizacion);
                 departamento = departamentoRepository.save(departamento);
-                requestDTO = new RegisterRequestDTO("admin@example.com","12345",true,departamento);
+                requestDTO = new RegisterRequestDTO("admin@example.com","12345",true,departamento,false);
                 user = userService.registerUser(requestDTO);
 
                 Organizacion organizacion2 = new Organizacion("example_org_2");
                 organizacion2 = organizacionRepository.save(organizacion2);
                 Departamento departamento2 = new Departamento("example_dep_2", organizacion);
                 departamento2 = departamentoRepository.save(departamento2);
-                requestDTO = new RegisterRequestDTO("example2@example.com","12345",false,departamento2);
+                requestDTO = new RegisterRequestDTO("example2@example.com","12345",false,departamento2,false);
                 user = userService.registerUser(requestDTO);
 
                 Organizacion organizacion3 = new Organizacion("example_org_3");
                 organizacion3 = organizacionRepository.save(organizacion3);
                 Departamento departamento3 = new Departamento("example_dep_3", organizacion3);
                 departamento3 = departamentoRepository.save(departamento3);
-                requestDTO = new RegisterRequestDTO("example3@example.com","12345",false,departamento3);
+                requestDTO = new RegisterRequestDTO("example3@example.com","12345",false,departamento3,false);
                 user = userService.registerUser(requestDTO);
             } catch (Exception ex) {
                 ResponseEntity.badRequest().body("Error al registrar usuarios por defecto: " + ex.getMessage());

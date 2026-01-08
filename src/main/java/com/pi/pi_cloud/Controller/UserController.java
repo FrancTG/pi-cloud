@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -64,8 +65,13 @@ public class UserController {
     public RedirectView guardar(@Valid RegisterRequestDTO usuario, Errors errores) throws Exception {
 
         if (errores.hasErrors()) {
+            for (ObjectError error : errores.getAllErrors()) {
+                System.out.println("ERROR: " + error.toString());
+            }
             return new RedirectView("/users");
         }
+
+        System.out.println("OTRO TOTP: " + usuario.isRequiresTOTP());
 
         userService.registerUser(usuario);
 

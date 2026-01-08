@@ -43,17 +43,20 @@ public class Usuario implements Serializable {
     @JoinColumn(name = "departamento_id")
     private Departamento departamento;
 
+    private boolean firstLogin;
+
 
     public Usuario() {
     }
 
-    public Usuario(String email, String password, boolean isAdmin, String salt, Set<Fichero> ficheros, Departamento departamento) {
+    public Usuario(String email, String password, boolean isAdmin, String salt, Set<Fichero> ficheros, Departamento departamento, boolean firstLogin) {
         this.email = email;
         this.password = password;
         this.isAdmin = isAdmin;
         this.salt = salt;
         this.ficheros = ficheros;
         this.departamento = departamento;
+        this.firstLogin = firstLogin;
     }
 
     public Long getId() {
@@ -134,5 +137,13 @@ public class Usuario implements Serializable {
 
     public void setDepartamento(Departamento departamento) {
         this.departamento = departamento;
+    }
+
+    public boolean isFirstLogin() {
+        return firstLogin;
+    }
+
+    public void setFirstLogin(boolean firstLogin) {
+        this.firstLogin = firstLogin;
     }
 }

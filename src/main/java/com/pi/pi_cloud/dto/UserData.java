@@ -9,6 +9,7 @@ public class UserData {
     private String password;
     private boolean isAdmin;
     private Long departamentoId;
+    private boolean requiresTOTP;
 
     public Long getId() {
         return id;
@@ -34,11 +35,11 @@ public class UserData {
         this.password = password;
     }
 
-    public boolean isAdmin() {
+    public boolean getIsAdmin() {
         return isAdmin;
     }
 
-    public void setAdmin(boolean admin) {
+    public void setIsAdmin(boolean admin) {
         isAdmin = admin;
     }
 
@@ -48,5 +49,13 @@ public class UserData {
 
     public void setDepartamentoId(Long departamentoId) {
         this.departamentoId = departamentoId;
+    }
+
+    public boolean getRequiresTOTP() {
+        return requiresTOTP;
+    }
+
+    public void setRequiresTOTP(boolean requiresTOTP) {
+        this.requiresTOTP = requiresTOTP;
     }
 }
