@@ -59,7 +59,6 @@ public class UserService {
 
     public void eliminarUsuario(Usuario usuario) {
         userRepository.delete(usuario);
-
     }
 
     /**
@@ -81,7 +80,7 @@ public class UserService {
         Usuario usuario = new Usuario();
         usuario.setEmail(dto.getEmail());
         usuario.setSalt(salt);
-        usuario.setPasswordHash(hashedPassword);
+        usuario.setPassword(hashedPassword);
         usuario.setTotpSecret(totpSecret);
         usuario.setPublicKey(publicKey);
         usuario.setEncryptedPrivateKey(privateKey);
@@ -101,7 +100,7 @@ public class UserService {
 
         Usuario usuario = opt.get();
 
-        boolean validPassword = PBKDF2Util.validatePassword(dto.getPassword(), usuario.getPasswordHash(), usuario.getSalt());
+        boolean validPassword = PBKDF2Util.validatePassword(dto.getPassword(), usuario.getPassword(), usuario.getSalt());
         if (!validPassword) return false;
 
         return TOTPUtil.verifyCode(usuario.getTotpSecret(), dto.getTotpCode());

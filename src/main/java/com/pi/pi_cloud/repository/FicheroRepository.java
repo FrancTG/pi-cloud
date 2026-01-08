@@ -7,5 +7,5 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface FicheroRepository extends CrudRepository<Fichero, Long> {
-    List<Fichero> findByUsuario(Usuario usuario);
+
 }

@@ -1,14 +1,18 @@
 package com.pi.pi_cloud.dto;
 
+import com.pi.pi_cloud.Model.Usuario;
+
 import javax.crypto.SecretKey;
+import java.util.HashMap;
+import java.util.List;
 
 public class FicheroData {
 
     private Long id;
     private String nombre;
     private byte[] datos;
-    private SecretKey claveCifrada;
-    private Long userId;
+    private List<Usuario> usuarios;
+    private HashMap<String, SecretKey> clavesCompartidas;
 
     public Long getId() {
         return id;
@@ -34,19 +38,19 @@ public class FicheroData {
         this.datos = datos;
     }
 
-    public SecretKey getClaveCifrada() {
-        return claveCifrada;
+    public List<Usuario> getUsuarios() {
+        return usuarios;
     }
 
-    public void setClaveCifrada(SecretKey claveCifrada) {
-        this.claveCifrada = claveCifrada;
+    public void setUsuarios(List<Usuario> usuarios) {
+        this.usuarios = usuarios;
     }
 
-    public Long getUserId() {
-        return userId;
+    public HashMap<String, SecretKey> getClavesCompartidas() {
+        return clavesCompartidas;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setClavesCompartidas(HashMap<String, SecretKey> clavesCompartidas) {
+        this.clavesCompartidas = clavesCompartidas;
     }
 }

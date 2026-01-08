@@ -36,8 +36,8 @@ public class Usuario implements Serializable {
     @Column(length = 4096)
     private String encryptedPrivateKey; // Clave privada cifrada con PBKDF2
 
-    @OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    List<Fichero> ficheros = new ArrayList<>();
+    @ManyToMany(mappedBy = "usuarios")
+    Set<Fichero> ficheros = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "departamento_id")
@@ -45,14 +45,14 @@ public class Usuario implements Serializable {
 
 
     public Usuario() {
-
     }
 
-    public Usuario(String email, String password, boolean isAdmin, Departamento departamento, String salt) {
+    public Usuario(String email, String password, boolean isAdmin, String salt, Set<Fichero> ficheros, Departamento departamento) {
         this.email = email;
         this.password = password;
-        this.salt = salt;
         this.isAdmin = isAdmin;
+        this.salt = salt;
+        this.ficheros = ficheros;
         this.departamento = departamento;
     }
 
@@ -72,20 +72,12 @@ public class Usuario implements Serializable {
         this.email = email;
     }
 
-    public String getPasswordHash() {
+    public String getPassword() {
         return password;
     }
 
-    public void setPasswordHash(String passwordHash) {
-        this.password = passwordHash;
-    }
-
-    public String getSalt() {
-        return salt;
-    }
-
-    public void setSalt(String salt) {
-        this.salt = salt;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public boolean isAdmin() {
@@ -96,20 +88,12 @@ public class Usuario implements Serializable {
         isAdmin = admin;
     }
 
-    public Departamento getDepartamento() {
-        return departamento;
+    public String getSalt() {
+        return salt;
     }
 
-    public void setDepartamento(Departamento departamento) {
-        this.departamento = departamento;
-    }
-
-    public List<Fichero> getFicheros() {
-        return ficheros;
-    }
-
-    public void setFicheros(List<Fichero> ficheros) {
-        this.ficheros = ficheros;
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
 
     public String getTotpSecret() {
@@ -134,5 +118,21 @@ public class Usuario implements Serializable {
 
     public void setEncryptedPrivateKey(String encryptedPrivateKey) {
         this.encryptedPrivateKey = encryptedPrivateKey;
+    }
+
+    public Set<Fichero> getFicheros() {
+        return ficheros;
+    }
+
+    public void setFicheros(Set<Fichero> ficheros) {
+        this.ficheros = ficheros;
+    }
+
+    public Departamento getDepartamento() {
+        return departamento;
+    }
+
+    public void setDepartamento(Departamento departamento) {
+        this.departamento = departamento;
     }
 }

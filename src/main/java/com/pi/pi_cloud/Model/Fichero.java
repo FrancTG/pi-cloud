@@ -3,6 +3,7 @@ package com.pi.pi_cloud.Model;
 import jakarta.persistence.*;
 
 import javax.crypto.SecretKey;
+import java.util.*;
 
 @Entity
 public class Fichero {
@@ -16,22 +17,25 @@ public class Fichero {
     @Lob
     private byte[] datos;
 
-    @Lob
-    private SecretKey claveCifrada;
+    @ManyToMany
+    @JoinTable(
+            name = "usuario_fichero",
+            joinColumns = @JoinColumn(name = "usuario_id"),
+            inverseJoinColumns = @JoinColumn(name = "fichero_id")
+    )
+    private List<Usuario> usuarios = new ArrayList<Usuario>();
 
-    @ManyToOne
-    @JoinColumn(name = "usuario_id")
-    private Usuario usuario;
+    @Lob
+    private HashMap<String, SecretKey> clavesCompartidas = new HashMap<>();
 
     public Fichero() {
-
     }
 
-    public Fichero(String nombre, byte[] datos, SecretKey claveCifrada, Usuario usuario) {
+    public Fichero(String nombre, byte[] datos, List<Usuario> usuarios, HashMap<String, SecretKey> clavesCompartidas) {
         this.nombre = nombre;
         this.datos = datos;
-        this.claveCifrada = claveCifrada;
-        this.usuario = usuario;
+        this.usuarios = usuarios;
+        this.clavesCompartidas = clavesCompartidas;
     }
 
     public Long getId() {
@@ -58,19 +62,19 @@ public class Fichero {
         this.datos = datos;
     }
 
-    public SecretKey getClaveCifrada() {
-        return claveCifrada;
+    public List<Usuario> getUsuarios() {
+        return usuarios;
     }
 
-    public void setClaveCifrada(SecretKey claveCifrada) {
-        this.claveCifrada = claveCifrada;
+    public void setUsuarios(List<Usuario> usuarios) {
+        this.usuarios = usuarios;
     }
 
-    public Usuario getUsuario() {
-        return usuario;
+    public HashMap<String, SecretKey> getClavesCompartidas() {
+        return clavesCompartidas;
     }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+    public void setClavesCompartidas(HashMap<String, SecretKey> clavesCompartidas) {
+        this.clavesCompartidas = clavesCompartidas;
     }
 }

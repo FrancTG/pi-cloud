@@ -23,9 +23,19 @@
             <div class="d-flex flex-wrap mt-4">
                 <div class="m-3 p-3 border rounded shadow-sm d-flex flex-column" th:each="fichero: ${ficheros}">
                     <p th:text="${fichero.nombre}" style="max-width: 200px; max-height: 50px; overflow: hidden; "></p>
-                    <a class="btn btn-primary" th:href="@{/fichero/{idFile}/download(idFile=${fichero.id})}">
-                        Descargar fichero
-                    </a>
+                    <div class="row">
+                        <div class="col">
+                            <a class="btn btn-primary" th:href="@{/fichero/{idFile}/download(idFile=${fichero.id})}">
+                                Descargar
+                            </a>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-secondary">
+                                Compartir
+                            </button>
+
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -36,7 +37,6 @@ public class FicheroService {
 
     @Autowired
     private UserRepository userRepository;
-
 
     @Transactional
     public void addFile(MultipartFile file, HttpSession session) throws IOException {
@@ -55,6 +55,7 @@ public class FicheroService {
             SecretKey claveDatos = Cifrado.generarClaveAes();
             AesResult datosCifrados = Cifrado.cifrarArchivoConAes(file.getBytes(),claveDatos);
 
+            //Pública o privada ??
             PrivateKey pkey = RSAUtil.decodePrivateKey(usuario.getEncryptedPrivateKey());
             byte[] claveDatosCifradaByte = Cifrado.cifrarClaveConRSA(claveDatos.getEncoded(), pkey);
 
@@ -63,8 +64,11 @@ public class FicheroService {
             Fichero fichero = new Fichero();
             fichero.setNombre(file.getOriginalFilename());
             fichero.setDatos(datosCifrados.toBlob());
-            fichero.setClaveCifrada(claveDatosCifrada);
-            fichero.setUsuario(usuario);
+            /*HashMap<String, SecretKey> clavesCompartidas = new HashMap<>();
+            clavesCompartidas.put(sessionEmail, claveDatosCifrada);
+            fichero.setClavesCompartidas(clavesCompartidas);*/
+            fichero.getClavesCompartidas().put(sessionEmail, claveDatosCifrada);
+            fichero.getUsuarios().add(usuario);
             ficheroRepository.save(fichero);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
@@ -73,8 +77,14 @@ public class FicheroService {
     }
 
     @Transactional
+    public void compartirFichero(String email, Fichero fichero) {
+
+    }
+
+    @Transactional
     public List<FicheroData> getFicherosFromUsuario(Usuario user) {
-        return ficheroRepository.findByUsuario(user).stream().map(fichero -> modelMapper.map(fichero, FicheroData.class)).collect(Collectors.toList());
+        return user.getFicheros().stream().map(fichero -> modelMapper.map(fichero, FicheroData.class)).collect(Collectors.toList());
+        //return ficheroRepository.findByUsuario(user).stream().map(fichero -> modelMapper.map(fichero, FicheroData.class)).collect(Collectors.toList());
     }
 
     @Transactional
@@ -90,12 +100,15 @@ public class FicheroService {
         }
 
         Usuario usuario = userRepository.findByEmail(sessionEmail).orElse(null);
+        if (usuario == null){
+            return null;
+        }
 
         try {
             PublicKey pkey = RSAUtil.decodePublicKey(usuario.getPublicKey());
 
             Fichero fichero = ficheroRepository.findById(id).orElse(null);
-            byte[] claveDatosDescifradaByte = Cifrado.descifrarClaveConRSA(fichero.getClaveCifrada().getEncoded(), pkey);
+            byte[] claveDatosDescifradaByte = Cifrado.descifrarClaveConRSA(fichero.getClavesCompartidas().get(sessionEmail).getEncoded(), pkey);
             SecretKey claveDatosDescifrada = new SecretKeySpec(claveDatosDescifradaByte,"AES");
 
             fichero.setDatos(Cifrado.descifrarArchivoConAes(fichero.getDatos(), claveDatosDescifrada));

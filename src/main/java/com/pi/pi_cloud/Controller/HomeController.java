@@ -60,7 +60,7 @@ public class HomeController {
             return "home";
         }
 
-        Usuario usuario = userRepository.findByEmail(sessionEmail.toString()).orElse(null);
+        Usuario usuario = userRepository.findByEmail(sessionEmail).orElse(null);
         List<FicheroData> ficheros = userService.getFicherosFromUsuario(usuario.getId());
 
         if (!ficheros.isEmpty()) {
