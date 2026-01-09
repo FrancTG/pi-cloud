@@ -19,6 +19,8 @@
             </form>
         </div>
 
+        <section th:replace="~{layout/compartirFichero :: compartirFichero}"></section>
+
         <div class="row">
             <div class="d-flex flex-wrap mt-4">
                 <div class="m-3 p-3 border rounded shadow-sm d-flex flex-column" th:each="fichero: ${ficheros}">
@@ -30,10 +32,9 @@
                             </a>
                         </div>
                         <div class="col">
-                            <button class="btn btn-secondary">
-                                Compartir
-                            </button>
-
+                            <a href="#" class="btn btn-secondary btn-block" data-bs-toggle="modal" data-bs-target="#modalCompartir" th:data-bs-fileid="${fichero.id}">
+                                <i class="fas fa-plus"></i> Compartir
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -45,6 +46,19 @@
 </div>
 
 <div th:replace="~{fragments::bootstrap}"></div>
+
+<script>
+    var modalCompartir = document.getElementById('modalCompartir')
+    modalCompartir.addEventListener('show.bs.modal', function(event) {
+        var button = event.relatedTarget
+        var recipient = button.getAttribute('data-bs-fileid')
+
+        var modalFileID = modalCompartir.querySelector('#fileid')
+
+        modalFileID.value = recipient
+    })
+
+</script>
 
 </body>
 </html>

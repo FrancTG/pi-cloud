@@ -26,12 +26,12 @@ public class Fichero {
     private List<Usuario> usuarios = new ArrayList<Usuario>();
 
     @Lob
-    private HashMap<String, SecretKey> clavesCompartidas = new HashMap<>();
+    private HashMap<String, byte[]> clavesCompartidas = new HashMap<>();
 
     public Fichero() {
     }
 
-    public Fichero(String nombre, byte[] datos, List<Usuario> usuarios, HashMap<String, SecretKey> clavesCompartidas) {
+    public Fichero(String nombre, byte[] datos, List<Usuario> usuarios, HashMap<String, byte[]> clavesCompartidas) {
         this.nombre = nombre;
         this.datos = datos;
         this.usuarios = usuarios;
@@ -70,11 +70,11 @@ public class Fichero {
         this.usuarios = usuarios;
     }
 
-    public HashMap<String, SecretKey> getClavesCompartidas() {
+    public HashMap<String, byte[]> getClavesCompartidas() {
         return clavesCompartidas;
     }
 
-    public void setClavesCompartidas(HashMap<String, SecretKey> clavesCompartidas) {
+    public void setClavesCompartidas(HashMap<String, byte[]> clavesCompartidas) {
         this.clavesCompartidas = clavesCompartidas;
     }
 }

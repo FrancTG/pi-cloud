@@ -10,6 +10,7 @@ import com.pi.pi_cloud.dto.FicheroData;
 import com.pi.pi_cloud.repository.DepartamentoRepository;
 import com.pi.pi_cloud.repository.OrganizacionRepository;
 import com.pi.pi_cloud.repository.UserRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -17,10 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -31,12 +29,6 @@ public class HomeController {
 
     @Autowired
     FicheroService ficheroService;
-
-    @Autowired
-    OrganizacionRepository organizacionRepository;
-
-    @Autowired
-    DepartamentoRepository departamentoRepository;
 
     @Autowired
     UserRepository userRepository;
@@ -88,5 +80,24 @@ public class HomeController {
                 .contentType(MediaType.parseMediaType(MediaType.APPLICATION_OCTET_STREAM_VALUE))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fichero.getNombre() + "\"")
                 .body(fichero.getDatos());
+    }
+
+    @PostMapping("/compartir")
+    public String compartirFichero (@RequestParam("fileid") String fileid, @RequestParam("email") String email, HttpSession session) {
+
+        Long fileIdLong = Long.parseLong(fileid);
+        ficheroService.compartirFichero(email,fileIdLong, session);
+
+        return "redirect:/home";
+    }
+
+    @PostMapping("/exportarClavePrivada")
+    public String exportarClavePrivada(@RequestParam("password") String password, HttpSession session, HttpServletResponse response) {
+        System.out.println("Password: " + password);
+
+        userService.guardarClavePrivadaEnSession(password,session);
+
+
+        return "redirect:/home";
     }
 }

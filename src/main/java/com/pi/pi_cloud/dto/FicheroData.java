@@ -12,7 +12,7 @@ public class FicheroData {
     private String nombre;
     private byte[] datos;
     private List<Usuario> usuarios;
-    private HashMap<String, SecretKey> clavesCompartidas;
+    private HashMap<String, byte[]> clavesCompartidas;
 
     public Long getId() {
         return id;
@@ -46,11 +46,11 @@ public class FicheroData {
         this.usuarios = usuarios;
     }
 
-    public HashMap<String, SecretKey> getClavesCompartidas() {
+    public HashMap<String, byte[]> getClavesCompartidas() {
         return clavesCompartidas;
     }
 
-    public void setClavesCompartidas(HashMap<String, SecretKey> clavesCompartidas) {
+    public void setClavesCompartidas(HashMap<String, byte[]> clavesCompartidas) {
         this.clavesCompartidas = clavesCompartidas;
     }
 }

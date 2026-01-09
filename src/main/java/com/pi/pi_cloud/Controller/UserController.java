@@ -75,7 +75,6 @@ public class UserController {
 
         userService.registerUser(usuario);
 
-
         return new RedirectView("/users");
     }
 }

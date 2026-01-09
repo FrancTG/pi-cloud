@@ -78,6 +78,7 @@ public class OnApplicationRun implements CommandLineRunner{
                 requestDTO = new RegisterRequestDTO("example3@example.com","12345",false,departamento3,false);
                 user = userService.registerUser(requestDTO);
             } catch (Exception ex) {
+                System.out.println("Errror: " + ex.getMessage());
                 ResponseEntity.badRequest().body("Error al registrar usuarios por defecto: " + ex.getMessage());
             }
 

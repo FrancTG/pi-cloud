@@ -13,6 +13,7 @@ import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.crypto.SecretKey;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -53,31 +55,21 @@ public class FicheroService {
 
         try {
             SecretKey claveDatos = Cifrado.generarClaveAes();
+
             AesResult datosCifrados = Cifrado.cifrarArchivoConAes(file.getBytes(),claveDatos);
 
-            //Pública o privada ??
-            PrivateKey pkey = RSAUtil.decodePrivateKey(usuario.getEncryptedPrivateKey());
-            byte[] claveDatosCifradaByte = Cifrado.cifrarClaveConRSA(claveDatos.getEncoded(), pkey);
-
-            SecretKey claveDatosCifrada = new SecretKeySpec(claveDatosCifradaByte,"AES");
+            PublicKey pkey = RSAUtil.decodePublicKey(usuario.getPublicKey());
+            byte[] claveDatosCifradaRSA = Cifrado.cifrarClaveConRSA(claveDatos.getEncoded(), pkey);
 
             Fichero fichero = new Fichero();
             fichero.setNombre(file.getOriginalFilename());
             fichero.setDatos(datosCifrados.toBlob());
-            /*HashMap<String, SecretKey> clavesCompartidas = new HashMap<>();
-            clavesCompartidas.put(sessionEmail, claveDatosCifrada);
-            fichero.setClavesCompartidas(clavesCompartidas);*/
-            fichero.getClavesCompartidas().put(sessionEmail, claveDatosCifrada);
+            fichero.getClavesCompartidas().put(sessionEmail, claveDatosCifradaRSA);
             fichero.getUsuarios().add(usuario);
             ficheroRepository.save(fichero);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
-
-    }
-
-    @Transactional
-    public void compartirFichero(String email, Fichero fichero) {
 
     }
 
@@ -105,10 +97,12 @@ public class FicheroService {
         }
 
         try {
-            PublicKey pkey = RSAUtil.decodePublicKey(usuario.getPublicKey());
+
+            String pkString = (String)session.getAttribute("privateKey");
+            PrivateKey pkey = RSAUtil.decodePrivateKey(pkString);
 
             Fichero fichero = ficheroRepository.findById(id).orElse(null);
-            byte[] claveDatosDescifradaByte = Cifrado.descifrarClaveConRSA(fichero.getClavesCompartidas().get(sessionEmail).getEncoded(), pkey);
+            byte[] claveDatosDescifradaByte = Cifrado.descifrarClaveConRSA(fichero.getClavesCompartidas().get(sessionEmail), pkey);
             SecretKey claveDatosDescifrada = new SecretKeySpec(claveDatosDescifradaByte,"AES");
 
             fichero.setDatos(Cifrado.descifrarArchivoConAes(fichero.getDatos(), claveDatosDescifrada));
@@ -119,6 +113,54 @@ public class FicheroService {
         }
 
         return null;
+    }
+
+    @Transactional
+    public boolean compartirFichero(String email, Long fileId, HttpSession session) {
+
+        Usuario usuarioCompartir = userRepository.findByEmail(email).orElse(null);
+        if (usuarioCompartir == null){
+            return false;
+        }
+
+        Fichero fichero = ficheroRepository.findById(fileId).orElse(null);
+        if (fichero == null) {
+            return false;
+        }
+
+        String sessionEmail = (String) session.getAttribute("email");
+        if (sessionEmail == null) {
+            return false;
+        }
+
+        Usuario usuarioActual = userRepository.findByEmail(sessionEmail).orElse(null);
+        if (usuarioActual == null){
+            return false;
+        }
+
+        try {
+
+            byte[] claveAESCifradaRSA = fichero.getClavesCompartidas().get(sessionEmail);
+            String pkString = (String) session.getAttribute("privateKey");
+            byte[] pkByte = Base64.getDecoder().decode(pkString);
+
+            PrivateKey pkUserActual = RSAUtil.decodePrivateKey(pkString);
+            byte[] claveAESBytes = Cifrado.descifrarClaveConRSA(claveAESCifradaRSA, pkUserActual);
+
+            SecretKey claveAES = new SecretKeySpec(claveAESBytes, "AES");
+
+            PublicKey pkUserCompartir = RSAUtil.decodePublicKey(usuarioCompartir.getPublicKey());
+            byte[] claveAESParaCompartir = Cifrado.cifrarClaveConRSA(claveAES.getEncoded(), pkUserCompartir);
+
+            fichero.getClavesCompartidas().put(usuarioCompartir.getEmail(),claveAESParaCompartir);
+
+            fichero.getUsuarios().add(usuarioCompartir);
+            ficheroRepository.save(fichero);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        return true;
     }
 
 }

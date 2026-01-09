@@ -7,7 +7,12 @@ import com.pi.pi_cloud.dto.FicheroData;
 import com.pi.pi_cloud.dto.UserData;
 import com.pi.pi_cloud.dto.LoginRequestDTO;
 import com.pi.pi_cloud.dto.RegisterRequestDTO;
+import com.pi.pi_cloud.lib.AesResult;
+import com.pi.pi_cloud.lib.Cifrado;
 import com.pi.pi_cloud.repository.UserRepository;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +21,20 @@ import com.pi.pi_cloud.Security.PBKDF2Util;
 import com.pi.pi_cloud.Security.RSAUtil;
 import com.pi.pi_cloud.Security.TOTPUtil;
 import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
+import java.security.PrivateKey;
+import java.security.spec.KeySpec;
 import java.util.Optional;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
+
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 
 import java.util.List;
@@ -82,11 +95,15 @@ public class UserService {
         usuario.setSalt(salt);
         usuario.setPassword(hashedPassword);
         usuario.setPublicKey(publicKey);
-        usuario.setEncryptedPrivateKey(privateKey);
         usuario.setAdmin(dto.isAdmin());
         usuario.setDepartamento(dto.getDepartamentoId());
 
-        System.out.println("TOTTTPPPPP: " + dto.isRequiresTOTP());
+        // Cifrado de la clave privada
+        SecretKey contrasenaSK = Cifrado.derivarClave(dto.getPassword().toCharArray(),salt.getBytes(StandardCharsets.UTF_8));
+        AesResult cpCifrada = Cifrado.cifrarArchivoConAes(Base64.getDecoder().decode(privateKey),contrasenaSK);
+        byte[] blob = cpCifrada.toBlob();
+        usuario.setEncryptedPrivateKey(Base64.getEncoder().encodeToString(blob));
+
         if (dto.isRequiresTOTP()){
             String totpSecret = TOTPUtil.generateSecret();
             usuario.setTotpSecret(totpSecret);
@@ -109,7 +126,6 @@ public class UserService {
         if (!validPassword) return false;
 
         // Si el usuario no tiene doble factor puede iniciar sesión (Cuentas administradoras)
-        //System.out.println("TOTPPPPPPPP: " + usuario.getTotpSecret());
         if (usuario.getTotpSecret() == null) {
             return true;
         }
@@ -153,5 +169,32 @@ public class UserService {
         MatrixToImageWriter.writeToStream(bitMatrix, "PNG", pngOutput);
 
         return Base64.getEncoder().encodeToString(pngOutput.toByteArray());
+    }
+
+    @Transactional
+    public void guardarClavePrivadaEnSession(String password, HttpSession session) {
+
+        String sessionEmail = (String) session.getAttribute("email");
+        if (sessionEmail == null) {
+            return;
+        }
+
+        Usuario usuario = userRepository.findByEmail(sessionEmail).orElse(null);
+        if (usuario == null) {
+            return;
+        }
+
+        try{
+            SecretKey contrasenaSK = Cifrado.derivarClave(password.toCharArray(),usuario.getSalt().getBytes(StandardCharsets.UTF_8));
+            byte[] blob = Base64.getDecoder().decode(usuario.getEncryptedPrivateKey());
+            byte[] privateKeyByte = Cifrado.descifrarArchivoConAes(blob,contrasenaSK);
+            String pkBase64 = Base64.getEncoder().encodeToString(privateKeyByte);
+
+            session.setAttribute("privateKey", pkBase64);
+
+        }catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+
     }
 }
