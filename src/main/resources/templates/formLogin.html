@@ -4,6 +4,9 @@
 
 <body>
 <div class="container-fluid d-flex flex-column vh-100 align-items-center">
+
+    <div th:replace="~{fragments :: qr-view}"></div>
+
     <div class="row flex-grow-1 col-3 align-items-center">
         <form id="loginForm">
             <h2 class="mb-4 text-center">Welcome</h2>
@@ -57,19 +60,43 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
 
         const text = await response.text();
 
-        if (response.ok) {
+        if (response.status === 200) {
             messageDiv.className = "mt-3 text-success text-center";
             messageDiv.innerHTML = " " + text + "<br>Redirigiendo a Home...";
             setTimeout(() => window.location.href = "/home", 1000);
-        } else {
+        } else if (response.status === 401) {
+            console.log(response)
             messageDiv.className = "mt-3 text-danger text-center";
             messageDiv.innerHTML = " " + text;
+
+        } else if (response.status === 403) {
+
+            let email = document.getElementById('email').value
+
+            fetch(window.location.protocol + '//' + window.location.host + '/api/auth/qr/' + email)
+                .then(response => response.text())
+                .then(htmlContent => {
+                    document.getElementById('qr-content').innerHTML = htmlContent
+                    var modal = new bootstrap.Modal(document.getElementById('qr-view-modal'))
+                    console.log(modal)
+                    modal.show()
+                })
+
         }
+
     } catch (error) {
         messageDiv.className = "mt-3 text-danger text-center";
         messageDiv.innerHTML = " Error de conexión con el servidor";
     }
+
+
 });
+
+
+function endFirstLogin(event) {
+    let email = document.getElementById('email').value
+    fetch(window.location.protocol + '//' + window.location.host + '/api/auth/endFirstLogin/' + email)
+}
 </script>
 </body>
 </html>

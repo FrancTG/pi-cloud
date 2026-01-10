@@ -44,7 +44,7 @@
 <div th:fragment="header (title, email)" class="row my-4">
     <div th:replace="~{fragments :: exportarClavePrivada}"></div>
     <div class="col fs-2" th:text="${title}"></div>
-    <div class="col d-flex justify-content-end align-items-center">
+    <div class="col d-flex justify-content-end align-items-center gap-1">
         <span class="me-3"> <b th:text="${email}">usuario@dominio.com</b></span>
         <form id="logoutForm">
             <button type="submit" class="btn btn-outline-danger">Cerrar sesión</button>
@@ -90,5 +90,25 @@
     </div>
 </div>
 
+<div th:fragment="qr-view">
+    <div class="modal fade" id="qr-view-modal" tabindex="-1" aria-labelledby="qr-view-modal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">Registrar doble factor</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div id="qr-content"></div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-success" onclick="endFirstLogin(event)">Ya lo he registrado</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
 
 </html>

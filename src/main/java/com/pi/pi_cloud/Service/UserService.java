@@ -9,11 +9,13 @@ import com.pi.pi_cloud.dto.LoginRequestDTO;
 import com.pi.pi_cloud.dto.RegisterRequestDTO;
 import com.pi.pi_cloud.lib.AesResult;
 import com.pi.pi_cloud.lib.Cifrado;
+import com.pi.pi_cloud.lib.LoginStatus;
 import com.pi.pi_cloud.repository.UserRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
+import lombok.extern.java.Log;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -97,6 +99,7 @@ public class UserService {
         usuario.setPublicKey(publicKey);
         usuario.setAdmin(dto.isAdmin());
         usuario.setDepartamento(dto.getDepartamentoId());
+        usuario.setFirstLogin(false);
 
         // Cifrado de la clave privada
         SecretKey contrasenaSK = Cifrado.derivarClave(dto.getPassword().toCharArray(),salt.getBytes(StandardCharsets.UTF_8));
@@ -107,6 +110,7 @@ public class UserService {
         if (dto.isRequiresTOTP()){
             String totpSecret = TOTPUtil.generateSecret();
             usuario.setTotpSecret(totpSecret);
+            usuario.setFirstLogin(true);
         }
 
         return userRepository.save(usuario);
@@ -116,21 +120,31 @@ public class UserService {
      * Verifica credenciales de login (email, password, TOTP)
      */
     @Transactional
-    public boolean loginUser(LoginRequestDTO dto) throws Exception {
+    public LoginStatus loginUser(LoginRequestDTO dto) throws Exception {
         Optional<Usuario> opt = userRepository.findByEmail(dto.getEmail());
-        if (opt.isEmpty()) return false;
+        if (opt.isEmpty()) return LoginStatus.INVALID_LOGIN;
 
         Usuario usuario = opt.get();
 
+        if (usuario.isFirstLogin()) {
+            return LoginStatus.FIRST_LOGIN;
+        }
+
         boolean validPassword = PBKDF2Util.validatePassword(dto.getPassword(), usuario.getPassword(), usuario.getSalt());
-        if (!validPassword) return false;
+        if (!validPassword) return LoginStatus.INVALID_LOGIN;
 
         // Si el usuario no tiene doble factor puede iniciar sesión (Cuentas administradoras)
         if (usuario.getTotpSecret() == null) {
-            return true;
+            return LoginStatus.SUCCESS;
         }
 
-        return TOTPUtil.verifyCode(usuario.getTotpSecret(), dto.getTotpCode());
+        boolean totpVerified = TOTPUtil.verifyCode(usuario.getTotpSecret(), dto.getTotpCode());
+
+        if (totpVerified) {
+            return LoginStatus.SUCCESS;
+        }
+
+        return LoginStatus.INVALID_LOGIN;
     }
 
     /**
@@ -196,5 +210,14 @@ public class UserService {
             System.out.println(ex.getMessage());
         }
 
+    }
+
+    @Transactional
+    public void finFirstLogin(String email) {
+        Usuario usuario = userRepository.findByEmail(email).orElse(null);
+
+        if (usuario != null) {
+            usuario.setFirstLogin(false);
+        }
     }
 }

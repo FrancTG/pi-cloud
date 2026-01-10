@@ -4,8 +4,11 @@ import com.pi.pi_cloud.Model.Usuario;
 import com.pi.pi_cloud.Service.UserService;
 import com.pi.pi_cloud.dto.LoginRequestDTO;
 import com.pi.pi_cloud.dto.RegisterRequestDTO;
+import com.pi.pi_cloud.lib.LoginStatus;
+import com.pi.pi_cloud.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,14 +34,18 @@ public class LoginController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO dto, HttpSession session) {
         try {
-            boolean success = userService.loginUser(dto);
+            LoginStatus loginStatus = userService.loginUser(dto);
 
-            if (success) {
-                // Guardar email del usuario autenticado en sesión
-                session.setAttribute("email", dto.getEmail());
-                return ResponseEntity.ok("Login exitoso ");
-            } else {
-                return ResponseEntity.status(401).body("Credenciales o código TOTP incorrectos ");
+            switch (loginStatus) {
+                case SUCCESS:
+                    session.setAttribute("email", dto.getEmail());
+                    return ResponseEntity.ok("Login exitoso ");
+                case FIRST_LOGIN:
+                    return ResponseEntity.status(403).body("Se requiere la autenticación de doble factor");
+                case INVALID_LOGIN:
+                    return ResponseEntity.status(401).body("Credenciales o código TOTP incorrectos ");
+                default:
+                    return ResponseEntity.status(401).body("Credenciales o código TOTP incorrectos ");
             }
 
         } catch (Exception e) {
@@ -67,4 +74,13 @@ public class LoginController {
             return ResponseEntity.badRequest().body("Error generando QR: " + e.getMessage());
         }
     }
+
+    @GetMapping("/endFirstLogin/{email}")
+    public String endFirstLogin(@PathVariable String email) {
+
+        userService.finFirstLogin(email);
+
+        return "redirect:/login";
+    }
+
 }
