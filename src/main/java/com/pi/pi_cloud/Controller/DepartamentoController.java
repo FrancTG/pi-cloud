@@ -2,9 +2,11 @@ package com.pi.pi_cloud.Controller;
 
 import com.pi.pi_cloud.Model.Departamento;
 import com.pi.pi_cloud.Model.Departamento;
+import com.pi.pi_cloud.Model.Usuario;
 import com.pi.pi_cloud.Service.DepartamentoService;
 import com.pi.pi_cloud.Service.OrganizacionService;
 import com.pi.pi_cloud.Service.UserService;
+import com.pi.pi_cloud.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,9 @@ public class DepartamentoController {
     @Autowired
     OrganizacionService orgService;
 
+    @Autowired
+    UserRepository userRepository;
+
     @GetMapping("/departamentos")
     public String usersList(Model model, HttpSession session) {
         //var users = userService.getAllUsers();
@@ -43,6 +48,11 @@ public class DepartamentoController {
         String sessionEmail = (String) session.getAttribute("email");
         if (sessionEmail != null) {
             model.addAttribute("email",sessionEmail);
+
+            Usuario usuario = userRepository.findByEmail(sessionEmail).orElse(null);
+            if (usuario != null) {
+                model.addAttribute("isAdmin",usuario.isAdmin());
+            }
         }
 
         return "departamentos";

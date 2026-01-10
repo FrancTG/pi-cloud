@@ -60,7 +60,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
         if (response.ok) {
             messageDiv.className = "mt-3 text-success text-center";
             messageDiv.innerHTML = " " + text + "<br>Redirigiendo a Home...";
-            setTimeout(() => window.location.href = "/dashboard", 1000);
+            setTimeout(() => window.location.href = "/home", 1000);
         } else {
             messageDiv.className = "mt-3 text-danger text-center";
             messageDiv.innerHTML = " " + text;

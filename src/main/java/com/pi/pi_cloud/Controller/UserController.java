@@ -5,6 +5,7 @@ import com.pi.pi_cloud.Service.DepartamentoService;
 import com.pi.pi_cloud.Service.UserService;
 import com.pi.pi_cloud.dto.RegisterRequestDTO;
 import com.pi.pi_cloud.dto.UserData;
+import com.pi.pi_cloud.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,9 @@ public class UserController {
     @Autowired
     DepartamentoService depService;
 
+    @Autowired
+    UserRepository userRepository;
+
     //@Autowired
     RegisterRequestDTO userRegister;
 
@@ -44,7 +48,13 @@ public class UserController {
         String sessionEmail = (String) session.getAttribute("email");
         if (sessionEmail != null) {
             model.addAttribute("email",sessionEmail);
+
+            Usuario usuario = userRepository.findByEmail(sessionEmail).orElse(null);
+            if (usuario != null) {
+                model.addAttribute("isAdmin",usuario.isAdmin());
+            }
         }
+
 
         return "panel";
     }
@@ -70,8 +80,6 @@ public class UserController {
             }
             return new RedirectView("/users");
         }
-
-        System.out.println("OTRO TOTP: " + usuario.isRequiresTOTP());
 
         userService.registerUser(usuario);
 

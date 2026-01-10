@@ -8,7 +8,7 @@
 <body>
 <div class="d-flex vh-100">
 
-    <div th:replace="~{fragments :: sidebar (active='departamentos')}"></div>
+    <div th:replace="~{fragments :: sidebar (active='departamentos',isAdmin=${isAdmin})}"></div>
 
     <!-- Contenido principal -->
     <div class="container-fluid overflow-auto">

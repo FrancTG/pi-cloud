@@ -76,7 +76,6 @@ public class FicheroService {
     @Transactional
     public List<FicheroData> getFicherosFromUsuario(Usuario user) {
         return user.getFicheros().stream().map(fichero -> modelMapper.map(fichero, FicheroData.class)).collect(Collectors.toList());
-        //return ficheroRepository.findByUsuario(user).stream().map(fichero -> modelMapper.map(fichero, FicheroData.class)).collect(Collectors.toList());
     }
 
     @Transactional

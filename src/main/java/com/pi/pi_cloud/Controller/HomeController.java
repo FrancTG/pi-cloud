@@ -60,6 +60,7 @@ public class HomeController {
         }
 
         model.addAttribute("email",sessionEmail);
+        model.addAttribute("isAdmin",usuario.isAdmin());
         return "home";
     }
 
@@ -93,10 +94,8 @@ public class HomeController {
 
     @PostMapping("/exportarClavePrivada")
     public String exportarClavePrivada(@RequestParam("password") String password, HttpSession session, HttpServletResponse response) {
-        System.out.println("Password: " + password);
 
         userService.guardarClavePrivadaEnSession(password,session);
-
 
         return "redirect:/home";
     }
