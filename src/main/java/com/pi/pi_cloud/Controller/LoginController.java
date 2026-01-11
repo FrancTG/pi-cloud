@@ -65,10 +65,10 @@ public class LoginController {
     public ResponseEntity<?> getMfaQr(@PathVariable String email) {
         try {
             String qrBase64 = userService.generateMfaQr(email);
-            String html = "<html><body><h3>Escanea este QR en Google Authenticator</h3>"
+            String html = "<html><body><center><h3>Escanea este QR en Google Authenticator</h3>"
                     + "<img src='data:image/png;base64," + qrBase64 + "'/>"
                     + "<p>O usa el secreto manual: <b>" + userService.getUserMfaSecret(email) + "</b></p>"
-                    + "</body></html>";
+                    + "</center></body></html>";
             return ResponseEntity.ok().header("Content-Type", "text/html").body(html);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error generando QR: " + e.getMessage());
@@ -76,11 +76,9 @@ public class LoginController {
     }
 
     @GetMapping("/endFirstLogin/{email}")
-    public String endFirstLogin(@PathVariable String email) {
+    public void endFirstLogin(@PathVariable String email) {
 
         userService.finFirstLogin(email);
-
-        return "redirect:/login";
     }
 
 }

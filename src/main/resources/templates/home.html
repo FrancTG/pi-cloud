@@ -48,6 +48,11 @@
 <div th:replace="~{fragments::bootstrap}"></div>
 
 <script>
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("error") === "warning") {
+        alert("Debes exportar la clave privada para poder descargar ficheros o compartirlos");
+    }
+
     var modalCompartir = document.getElementById('modalCompartir')
     modalCompartir.addEventListener('show.bs.modal', function(event) {
         var button = event.relatedTarget

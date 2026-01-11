@@ -77,9 +77,9 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
                 .then(response => response.text())
                 .then(htmlContent => {
                     document.getElementById('qr-content').innerHTML = htmlContent
-                    var modal = new bootstrap.Modal(document.getElementById('qr-view-modal'))
-                    console.log(modal)
-                    modal.show()
+                    const modalElement = document.getElementById('qr-view-modal');
+                    let modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+                    modal.show();
                 })
 
         }
@@ -92,10 +92,17 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
 
 });
 
-
 function endFirstLogin(event) {
+    const modalElement = document.getElementById('qr-view-modal');
+
+    const modalInstance = bootstrap.Modal.getInstance(modalElement);
+    if (modalInstance) {
+        modalInstance.hide();
+    }
+
     let email = document.getElementById('email').value
-    fetch(window.location.protocol + '//' + window.location.host + '/api/auth/endFirstLogin/' + email)
+    fetch(`/api/auth/endFirstLogin/${email}`)
+
 }
 </script>
 </body>

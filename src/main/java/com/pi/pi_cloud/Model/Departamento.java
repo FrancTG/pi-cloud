@@ -21,7 +21,7 @@ public class Departamento {
     @JoinColumn(name = "organizacion_id")
     private Organizacion organizacion;
 
-    @OneToMany(mappedBy = "departamento", cascade = { CascadeType.DETACH })
+    @OneToMany(mappedBy = "departamento", cascade = CascadeType.ALL, orphanRemoval = true )
     Set<Usuario> usuarios = new HashSet<>();
 
     public Departamento() {

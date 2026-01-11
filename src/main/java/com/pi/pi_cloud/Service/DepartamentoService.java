@@ -34,6 +34,7 @@ public class DepartamentoService {
 
     }
 
+    @Transactional
     public void eliminarDepartamentoPorId(Long id) {
         departamentoRepository.deleteById(id);
     }

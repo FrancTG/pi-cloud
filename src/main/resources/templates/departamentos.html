@@ -22,5 +22,13 @@
         <div id="logoutMessage" class="text-center mt-3"></div>
     </div>
 </div>
+
+<script>
+    function avisoBorradoEnCascada(id) {
+        alert('AVISO: Esta opción borrará todos los usuarios del departamento')
+        fetch('/eliminardep?id=' + id)
+            .then(response => { window.location.replace('/departamentos')})
+    }
+</script>
 </body>
 </html>

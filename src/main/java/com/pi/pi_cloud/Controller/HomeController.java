@@ -73,7 +73,12 @@ public class HomeController {
     }
 
     @GetMapping("/fichero/{id}/download")
-    public ResponseEntity<byte[]> download(@PathVariable(value="id") Long fileId, HttpSession session) {
+    public ResponseEntity<byte[]> download(@PathVariable(value="id") Long fileId, HttpSession session, HttpServletResponse response) throws IOException {
+
+        if (session.getAttribute("privateKey") == null) {
+            response.sendRedirect("/home?error=warning");
+            return null;
+        }
 
         Fichero fichero = ficheroService.findByIdDescifrado(fileId,session);
 
@@ -85,6 +90,10 @@ public class HomeController {
 
     @PostMapping("/compartir")
     public String compartirFichero (@RequestParam("fileid") String fileid, @RequestParam("email") String email, HttpSession session) {
+
+        if (session.getAttribute("privateKey") == null) {
+            return "redirect:/home?error=warning";
+        }
 
         Long fileIdLong = Long.parseLong(fileid);
         ficheroService.compartirFichero(email,fileIdLong, session);

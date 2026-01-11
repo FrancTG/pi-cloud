@@ -218,6 +218,7 @@ public class UserService {
 
         if (usuario != null) {
             usuario.setFirstLogin(false);
+            userRepository.save(usuario);
         }
     }
 }
