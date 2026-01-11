@@ -66,6 +66,7 @@ public class FicheroService {
             fichero.setDatos(datosCifrados.toBlob());
             fichero.getClavesCompartidas().put(sessionEmail, claveDatosCifradaRSA);
             fichero.getUsuarios().add(usuario);
+            fichero.setResumenDatos(Cifrado.resumenSHA256(file.getBytes()));
             ficheroRepository.save(fichero);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());

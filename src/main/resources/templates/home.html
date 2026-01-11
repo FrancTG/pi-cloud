@@ -24,7 +24,8 @@
         <div class="row">
             <div class="d-flex flex-wrap mt-4">
                 <div class="m-3 p-3 border rounded shadow-sm d-flex flex-column" th:each="fichero: ${ficheros}">
-                    <p th:text="${fichero.nombre}" style="max-width: 200px; max-height: 50px; overflow: hidden; "></p>
+                    <p th:text="${fichero.nombre}" class="text-break h3" style="max-width: 300px; max-height: 100px; overflow: hidden; "></p>
+                    <p class="text-secondary text-break" style="max-width: 300px; max-height: 100px; overflow: hidden; ">SHA256: <small th:text="${fichero.resumenDatos}"></small></p>
                     <div class="row">
                         <div class="col">
                             <a class="btn btn-primary" th:href="@{/fichero/{idFile}/download(idFile=${fichero.id})}">

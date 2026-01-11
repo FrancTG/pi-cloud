@@ -10,6 +10,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.security.*;
 import java.security.spec.KeySpec;
 import java.util.Arrays;
+import java.util.HexFormat;
 
 public class Cifrado {
 
@@ -62,5 +63,11 @@ public class Cifrado {
         byte[] keyBytes = factory.generateSecret(spec).getEncoded();
 
         return new SecretKeySpec(keyBytes, "AES");
+    }
+
+    public static String resumenSHA256(byte[] mensaje) throws NoSuchAlgorithmException {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] hashBytes = digest.digest(mensaje);
+        return HexFormat.of().formatHex(hashBytes);
     }
 }

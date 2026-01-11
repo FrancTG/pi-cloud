@@ -28,14 +28,17 @@ public class Fichero {
     @Lob
     private HashMap<String, byte[]> clavesCompartidas = new HashMap<>();
 
+    private String resumenDatos;
+
     public Fichero() {
     }
 
-    public Fichero(String nombre, byte[] datos, List<Usuario> usuarios, HashMap<String, byte[]> clavesCompartidas) {
+    public Fichero(String nombre, byte[] datos, List<Usuario> usuarios, HashMap<String, byte[]> clavesCompartidas, String resumenDatos) {
         this.nombre = nombre;
         this.datos = datos;
         this.usuarios = usuarios;
         this.clavesCompartidas = clavesCompartidas;
+        this.resumenDatos = resumenDatos;
     }
 
     public Long getId() {
@@ -76,5 +79,13 @@ public class Fichero {
 
     public void setClavesCompartidas(HashMap<String, byte[]> clavesCompartidas) {
         this.clavesCompartidas = clavesCompartidas;
+    }
+
+    public String getResumenDatos() {
+        return resumenDatos;
+    }
+
+    public void setResumenDatos(String resumenDatos) {
+        this.resumenDatos = resumenDatos;
     }
 }
